@@ -10,6 +10,11 @@
 			align-items: center;
 			height: 100vh;
 			margin: 0;
+			transition: background-color 150ms linear;
+		}
+
+		div {
+			position: relative;
 		}
 
 		p {
@@ -17,20 +22,43 @@
 			font-size: 4em;
 			color: white;
 			cursor: pointer;
+			user-select: none;
+		}
+
+		p#notifier {
+			opacity: 0;
+			position: absolute;
+			font-size: 2rem;
+			white-space: nowrap;
+			translate: -50% -50%;
+			left: 50%;
+			top: 60%;
+			transition: opacity 0.3s ease-out;
+			cursor: default;
 		}
 	</style>
 	<script>
+		let hideTimeoutID;
+
 		function copyToPaste() {
-			var hexTextElement = document.getElementById("hexText");
-			navigator.clipboard.writeText(hexTextElement.innerText).then(function () {
-				console.log('Async: Copying to clipboard was successful!');
+			const hexText = document.getElementById("hexText");
+			const notifier = document.getElementById("notifier");
+			const notifierTimeout = 1000;
+
+			navigator.clipboard.writeText(hexText.innerText).then(function () {
+				notifier.style.opacity = "1";
+
+				clearTimeout(hideTimeoutID);
+				hideTimeoutID = setTimeout(function () {
+					notifier.style.opacity = "0";
+				}, notifierTimeout);
 			}, function (err) {
-				console.error('Async: Could not copy text: ', err);
+				alert("Could not copy text: ", err);
 			});
 		}
 
 		function clickOutsideToggleHex() {
-			var hexTextElement = document.getElementById("hexText");
+			const hexTextElement = document.getElementById("hexText");
 			if (hexTextElement.innerText === "#09CDDA") {
 				hexTextElement.innerText = "#00BABE";
 				document.body.style.backgroundColor = "#00BABE";
@@ -43,7 +71,7 @@
 
 	<script defer>
 		document.addEventListener("click", function (event) {
-			var hexTextElement = document.getElementById("hexText");
+			const hexTextElement = document.getElementById("hexText");
 			if (!hexTextElement.contains(event.target)) {
 				clickOutsideToggleHex();
 			}
@@ -52,8 +80,12 @@
 </head>
 
 <body>
-	<p id="hexText" onClick="copyToPaste()">#09CDDA</p>
+	<div>
+		<p id="hexText" onClick="copyToPaste()">#09CDDA</p>
+		<p id="notifier">Hex code copied to clipboard!</p>
+	</div>
 	<!-- Yoda was here -->
+	<!-- Then Sonic was here -->
 </body>
 
 </html>
