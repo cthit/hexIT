@@ -1,35 +1,59 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<style>
-			body {
-				background-color: #09CDDA;
-				display: flex;
-				justify-content: center;
-				align-items: center;
-				height: 100vh;
-				margin: 0;
-			}
-			p {
-				font-family: "Arial Black", Gadget, sans-serif;
-				font-size: 4em;
-				color: white;
-				cursor:pointer;
-			}
-		</style>
+
+<head>
+	<style>
+		body {
+			background-color: #09CDDA;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 100vh;
+			margin: 0;
+		}
+
+		p {
+			font-family: "Arial Black", Gadget, sans-serif;
+			font-size: 4em;
+			color: white;
+			cursor: pointer;
+		}
+	</style>
 	<script>
 		function copyToPaste() {
-			var text = "#09CDDA";
-			navigator.clipboard.writeText(text).then(function() {
-				  console.log('Async: Copying to clipboard was successful!');
-			}, function(err) {
-				  console.error('Async: Could not copy text: ', err);
+			var hexTextElement = document.getElementById("hexText");
+			navigator.clipboard.writeText(hexTextElement.innerText).then(function () {
+				console.log('Async: Copying to clipboard was successful!');
+			}, function (err) {
+				console.error('Async: Could not copy text: ', err);
 			});
 		}
+
+		function clickOutsideToggleHex() {
+			var hexTextElement = document.getElementById("hexText");
+			if (hexTextElement.innerText === "#09CDDA") {
+				hexTextElement.innerText = "#00BABE";
+				document.body.style.backgroundColor = "#00BABE";
+			} else {
+				hexTextElement.innerText = "#09CDDA";
+				document.body.style.backgroundColor = "#09CDDA";
+			}
+		}
 	</script>
-	</head>
-	<body>
-		<p onClick="copyToPaste()">#09CDDA</p>
-		<!-- Yoda was here --!>
-	</body>
+
+	<script defer>
+		document.addEventListener("click", function (event) {
+			var hexTextElement = document.getElementById("hexText");
+			if (!hexTextElement.contains(event.target)) {
+				clickOutsideToggleHex();
+			}
+		});
+	</script>
+</head>
+
+<body>
+	<p id="hexText" onClick="copyToPaste()">#09CDDA</p>
+	<!-- Yoda was here -->
+</body>
+
 </html>
