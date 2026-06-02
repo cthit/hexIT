@@ -1,35 +1,91 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<style>
-			body {
-				background-color: #09CDDA;
-				display: flex;
-				justify-content: center;
-				align-items: center;
-				height: 100vh;
-				margin: 0;
-			}
-			p {
-				font-family: "Arial Black", Gadget, sans-serif;
-				font-size: 4em;
-				color: white;
-				cursor:pointer;
-			}
-		</style>
+
+<head>
+	<style>
+		body {
+			background-color: #09CDDA;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 100vh;
+			margin: 0;
+			transition: background-color 150ms linear;
+		}
+
+		div {
+			position: relative;
+		}
+
+		p {
+			font-family: "Arial Black", Gadget, sans-serif;
+			font-size: 4em;
+			color: white;
+			cursor: pointer;
+			user-select: none;
+		}
+
+		p#notifier {
+			opacity: 0;
+			position: absolute;
+			font-size: 2rem;
+			white-space: nowrap;
+			translate: -50% -50%;
+			left: 50%;
+			top: 60%;
+			transition: opacity 0.3s ease-out;
+			cursor: default;
+		}
+	</style>
 	<script>
+		let hideTimeoutID;
+
 		function copyToPaste() {
-			var text = "#09CDDA";
-			navigator.clipboard.writeText(text).then(function() {
-				  console.log('Async: Copying to clipboard was successful!');
-			}, function(err) {
-				  console.error('Async: Could not copy text: ', err);
+			const hexText = document.getElementById("hexText");
+			const notifier = document.getElementById("notifier");
+			const notifierTimeout = 1000;
+
+			navigator.clipboard.writeText(hexText.innerText).then(function () {
+				notifier.style.opacity = "1";
+
+				clearTimeout(hideTimeoutID);
+				hideTimeoutID = setTimeout(function () {
+					notifier.style.opacity = "0";
+				}, notifierTimeout);
+			}, function (err) {
+				alert("Could not copy text: ", err);
 			});
 		}
+
+		function clickOutsideToggleHex() {
+			const hexTextElement = document.getElementById("hexText");
+			if (hexTextElement.innerText === "#09CDDA") {
+				hexTextElement.innerText = "#00BABE";
+				document.body.style.backgroundColor = "#00BABE";
+			} else {
+				hexTextElement.innerText = "#09CDDA";
+				document.body.style.backgroundColor = "#09CDDA";
+			}
+		}
 	</script>
-	</head>
-	<body>
-		<p onClick="copyToPaste()">#09CDDA</p>
-		<!-- Yoda was here --!>
-	</body>
+
+	<script defer>
+		document.addEventListener("click", function (event) {
+			const hexTextElement = document.getElementById("hexText");
+			if (!hexTextElement.contains(event.target)) {
+				clickOutsideToggleHex();
+			}
+		});
+	</script>
+</head>
+
+<body>
+	<div>
+		<p id="hexText" onClick="copyToPaste()">#09CDDA</p>
+		<p id="notifier">Hex code copied to clipboard!</p>
+	</div>
+	<!-- Yoda was here -->
+	<!-- Then Sonic was here -->
+</body>
+
 </html>
